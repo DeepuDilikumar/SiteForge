@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { fail, handle, ok } from "@/lib/api";
+import { isMissingSchemaError } from "@/lib/db";
 import { searchBusinesses } from "@/lib/places/provider";
 import type { Business } from "@/lib/places/types";
 
@@ -21,8 +22,9 @@ export const GET = handle(async (request: Request) => {
   try {
     businesses = await searchBusinesses(parsed.data);
   } catch (error) {
+    if (isMissingSchemaError(error)) throw error;
     console.error(error);
-    return fail("places_failed", "The business search didn't respond.");
+    return fail("places_failed", "The business search didn't respond. Try again in a moment.");
   }
   const results: SearchResult[] = businesses.map((b) => ({
     id: b.id,

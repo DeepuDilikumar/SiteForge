@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { z } from "zod";
 import { getSessionUser, type SessionUser } from "@/lib/auth";
+import { isMissingSchemaError, MISSING_SCHEMA_MESSAGE } from "@/lib/db";
 import type { ErrorCode, Result } from "@/lib/result";
 
 const STATUS: Record<ErrorCode, number> = {
@@ -62,6 +63,7 @@ export function handle<A extends unknown[]>(fn: (...args: A) => Promise<Response
     } catch (error) {
       if (error instanceof HttpError) return fail(error.code, error.message);
       console.error(error);
+      if (isMissingSchemaError(error)) return fail("server_error", MISSING_SCHEMA_MESSAGE);
       return fail("server_error", "Something went wrong on our side. Try again in a moment.");
     }
   };

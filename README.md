@@ -68,13 +68,39 @@ The three templates, shown for the same bakery.
 
 ```bash
 npm install
-npm run db:migrate
 npm run db:seed
 npm run dev
 ```
 
+`npm run dev` applies database migrations before it starts (you can also run `npm run db:migrate`
+yourself). `npm run db:seed` creates the demo accounts; it migrates first if needed.
+
 Open http://localhost:3000. With no API keys set, SiteForge uses built-in sample business data and a
 deterministic copywriter, and shows a small **Demo data** chip in the header.
+
+### Running in GitHub Codespaces
+
+Codespaces serves the app on a forwarded `https://<name>-3000.app.github.dev` address, so tell the
+app its public URL before starting it:
+
+```bash
+npm install
+cp .env.example .env
+sed -i "s|^BETTER_AUTH_URL=.*|BETTER_AUTH_URL=https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}|" .env
+sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=$(openssl rand -base64 32)|" .env
+npm run db:seed
+npm run dev
+```
+
+Then open the **Ports** tab and click the globe icon next to port 3000.
+
+### Troubleshooting
+
+- **"The database isn't set up yet"** (or, in older versions, "The business search didn't
+  respond" on every search): the database has no tables. Stop the server, run
+  `npm run db:migrate` and `npm run db:seed`, then `npm run dev` again.
+- **Sign-in fails with an origin error in Codespaces or behind a proxy**: set `BETTER_AUTH_URL` to
+  the exact address in your browser's address bar and restart.
 
 ### Demo accounts
 
