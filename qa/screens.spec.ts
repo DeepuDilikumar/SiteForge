@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { SHOTS, settle, signIn } from "./helpers";
+import { SHOTS, settle, signIn, step } from "./helpers";
 
 const SIZES = [
   { name: "desktop", width: 1440, height: 900 },
@@ -71,6 +71,8 @@ for (const size of SIZES) {
         await page.evaluate(() => document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-in")));
         await page.waitForTimeout(700);
         await page.screenshot({ path: `${SHOTS}/${size.name}-template-${template}.png`, fullPage: true });
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await step(page, `template-${template}-${size.name}`, 300);
       }
     });
   });

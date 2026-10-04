@@ -9,6 +9,61 @@ SiteForge helps freelancers and small agencies who sell websites to local busine
 Built with Next.js (App Router) and TypeScript, Tailwind CSS, Drizzle ORM with libSQL, Better Auth,
 Gemini (`@google/genai`), zod, vitest and Playwright.
 
+## Screenshots
+
+Every screenshot below comes from the automated end-to-end tests in `qa/journeys.spec.ts`, running
+on demo data with no API keys. Run `npm run qa:journeys` (with `npm run dev` running) to refresh
+them in `docs/screenshots/`.
+
+### Journey 1: search without an account → sign up → build → workspace
+
+| | |
+| --- | --- |
+| **1. Search first.** No account needed. | **2. Results.** Businesses without a website, filtered by default. |
+| ![Landing page with search](docs/screenshots/journey1-1-landing.png) | ![Search results](docs/screenshots/journey1-2-results.png) |
+| **3. Sign up without leaving the page.** The dialog keeps the business you picked. | **4. Build page.** Real previews of all three templates; the recommended one is preselected. |
+| ![Sign-up dialog](docs/screenshots/journey1-3-signup-dialog.png) | ![Build page with template picker](docs/screenshots/journey1-4-build.png) |
+| **5. Workspace.** The built site, with one next step: Get live link. | **6. Live links are a Pro feature.** Free users see the upgrade dialog. |
+| ![Site workspace](docs/screenshots/journey1-5-workspace.png) | ![Live links are part of Pro dialog](docs/screenshots/journey1-6-live-link-is-pro.png) |
+
+### Journey 2: free user's second site → upgrade → checkout → build continues
+
+| | |
+| --- | --- |
+| **1. Monthly limit reached.** "Build site" opens the upgrade dialog. | **2. Pricing.** Free vs Pro. |
+| ![Upgrade dialog](docs/screenshots/journey2-1-upgrade-dialog.png) | ![Pricing page](docs/screenshots/journey2-2-pricing.png) |
+| **3. Checkout (test mode).** No real charge. | **4. Confirmed.** Redirects back after two seconds. |
+| ![Checkout](docs/screenshots/journey2-3-checkout.png) | ![Checkout success](docs/screenshots/journey2-4-success.png) |
+| **5. The build the user started finishes on its own.** | |
+| ![Site built after upgrade](docs/screenshots/journey2-5-built-after-upgrade.png) | |
+
+### Journey 3: Pro user → live link → send to owner → mark contacted
+
+| | |
+| --- | --- |
+| **1. Live link ready.** Copy it or go straight to sending. | **2. The public site on a phone.** |
+| ![Live link dialog](docs/screenshots/journey3-1-live-link.png) | ![Published site on a phone](docs/screenshots/journey3-2-live-site-phone.png) |
+| **3. Send to owner.** A drafted WhatsApp message, editable before sending. | **4. After opening WhatsApp.** A quiet "Mark as contacted?" prompt. |
+| ![Outreach panel](docs/screenshots/journey3-3-outreach.png) | ![Mark as contacted prompt](docs/screenshots/journey3-4-mark-contacted.png) |
+| **5. Dashboard.** The lead now shows Contacted. | |
+| ![Dashboard pipeline](docs/screenshots/journey3-5-dashboard.png) | |
+
+### Journey 4: AI failure → clear error, credit not used → retry
+
+| | |
+| --- | --- |
+| **1. The build fails** (simulated), says the free credit wasn't used, and offers Try again. | **2. Try again succeeds.** |
+| ![Build failed](docs/screenshots/journey4-1-build-failed.png) | ![Site built on retry](docs/screenshots/journey4-2-retry-built.png) |
+
+### Generated sites
+
+The three templates, shown for the same bakery.
+
+| Legacy | Modern | Bold |
+| --- | --- | --- |
+| ![Legacy template, desktop](docs/screenshots/template-legacy-desktop.png) | ![Modern template, desktop](docs/screenshots/template-modern-desktop.png) | ![Bold template, desktop](docs/screenshots/template-bold-desktop.png) |
+| ![Legacy template, phone](docs/screenshots/template-legacy-mobile.png) | ![Modern template, phone](docs/screenshots/template-modern-mobile.png) | ![Bold template, phone](docs/screenshots/template-bold-mobile.png) |
+
 ## Quick start (no keys needed)
 
 ```bash
@@ -63,7 +118,8 @@ Copy `.env.example` to `.env` and fill in what you need. Every key is optional i
 
 Playwright QA runs against a server you start yourself. Set `QA_BASE_URL` to point it elsewhere, and
 `PLAYWRIGHT_CHROMIUM` to use a preinstalled Chromium instead of `npx playwright install chromium`.
-Screenshots land in `qa/screenshots/`.
+Working screenshots land in `qa/screenshots/` (not committed); the README images in
+`docs/screenshots/` are refreshed by the journey and template specs.
 
 ## Plugging in real services
 

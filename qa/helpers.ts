@@ -16,3 +16,11 @@ export async function settle(page: Page, ms = 1200) {
 }
 
 export { expect };
+
+/** README screenshots, refreshed by the journey specs. Committed under docs/screenshots. */
+export const DOCS = "docs/screenshots";
+
+export async function step(page: Page, name: string, ms = 600) {
+  await settle(page, ms);
+  await page.screenshot({ path: `${DOCS}/${name}.png` });
+}
