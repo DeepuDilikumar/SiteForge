@@ -80,34 +80,38 @@ deterministic copywriter, and shows a small **Demo data** chip in the header.
 
 ### Running in GitHub Codespaces
 
-Codespaces serves the app on a forwarded `https://<name>-3000.app.github.dev` address, so tell the
-app its public URL before starting it:
+Codespaces serves the app on a forwarded `https://<name>-3000.app.github.dev` address. The app
+detects this from the Codespaces environment, so sign-in works there with no `.env` changes:
 
 ```bash
 npm install
-cp .env.example .env
-sed -i "s|^BETTER_AUTH_URL=.*|BETTER_AUTH_URL=https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}|" .env
-sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=$(openssl rand -base64 32)|" .env
 npm run db:seed
 npm run dev
 ```
 
-Then open the **Ports** tab and click the globe icon next to port 3000.
+Then open the **Ports** tab, click the globe icon next to port 3000, and sign in as `deepu` /
+`deepudeepu`. If you set `BETTER_AUTH_URL` in a `.env` file, it must match the address in your
+browser exactly; delete the line to let the app detect it.
 
 ### Troubleshooting
 
 - **"The database isn't set up yet"** (or, in older versions, "The business search didn't
   respond" on every search): the database has no tables. Stop the server, run
   `npm run db:migrate` and `npm run db:seed`, then `npm run dev` again.
-- **Sign-in fails with an origin error in Codespaces or behind a proxy**: set `BETTER_AUTH_URL` to
-  the exact address in your browser's address bar and restart.
+- **"Invalid origin" when signing in or creating an account**: the address in your browser doesn't
+  match the one the app expects. In Codespaces, remove any `BETTER_AUTH_URL` line from `.env` and
+  restart `npm run dev`. Elsewhere (a tunnel or another host), set `BETTER_AUTH_URL` to the exact
+  address in your browser's address bar and restart.
 
 ### Demo accounts
 
-| Email           | Password   | Plan | What's there                                        |
-| --------------- | ---------- | ---- | --------------------------------------------------- |
-| `free@demo.dev` | `demo1234` | Free | Empty pipeline, one free site available this month  |
-| `pro@demo.dev`  | `demo1234` | Pro  | Four leads across statuses, one published live link |
+Sign in with the username or the email.
+
+| Username | Email            | Password     | Plan | What's there                                        |
+| -------- | ---------------- | ------------ | ---- | --------------------------------------------------- |
+| `deepu`  | `deepu@demo.dev` | `deepudeepu` | Pro  | Empty pipeline; build as many sites as you like     |
+| `free`   | `free@demo.dev`  | `demo1234`   | Free | Empty pipeline, one free site available this month  |
+| `pro`    | `pro@demo.dev`   | `demo1234`   | Pro  | Four leads across statuses, one published live link |
 
 Running `npm run db:seed` again resets both accounts.
 

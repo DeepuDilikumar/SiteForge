@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { HttpError } from "@/lib/api";
+import { configuredAppUrl } from "@/lib/app-url";
 import { db } from "@/lib/db";
 import { business, lead, site } from "@/lib/db/schema";
 import { toBusiness } from "@/lib/places/provider";
@@ -18,8 +19,7 @@ export async function loadOwnedSite(siteId: string, userId: string) {
 }
 
 export function appUrl(request?: Request): string {
-  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL.replace(/\/$/, "");
-  return request ? new URL(request.url).origin : "http://localhost:3000";
+  return configuredAppUrl() ?? (request ? new URL(request.url).origin : "http://localhost:3000");
 }
 
 export function publicSiteUrl(slug: string, request?: Request): string {

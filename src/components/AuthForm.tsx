@@ -20,7 +20,10 @@ type AuthFormProps = {
 function validate(mode: Mode, values: { name: string; email: string; password: string }): Errors {
   const errors: Errors = {};
   if (mode === "signup" && !values.name.trim()) errors.name = "Enter your name. Business owners will see it in your messages.";
-  if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) errors.email = "Enter a valid email address.";
+  const login = values.email.trim();
+  if (mode === "signup" ? !/^\S+@\S+\.\S+$/.test(login) : !login) {
+    errors.email = mode === "signup" ? "Enter a valid email address." : "Enter your email or username.";
+  }
   if (values.password.length < 8) errors.password = mode === "signup" ? "Use at least 8 characters." : "Enter your password.";
   return errors;
 }
@@ -43,12 +46,16 @@ export function AuthForm({ mode, next, onModeChange, onSuccess }: AuthFormProps)
     setPending(true);
     const result = isSignup
       ? await authClient.signUp.email({ name: values.name.trim(), email: values.email.trim(), password: values.password })
-      : await authClient.signIn.email({ email: values.email.trim(), password: values.password });
+      : values.email.includes("@")
+        ? await authClient.signIn.email({ email: values.email.trim(), password: values.password })
+        : await authClient.signIn.username({ username: values.email.trim(), password: values.password });
     if (result.error) {
       setPending(false);
       const code = result.error.code ?? "";
       if (/USER_ALREADY_EXISTS/.test(code)) setErrors({ email: "An account with this email already exists. Sign in instead." });
-      else if (/INVALID_EMAIL_OR_PASSWORD|INVALID_PASSWORD|USER_NOT_FOUND/.test(code)) setErrors({ form: "That email and password don't match. Check them and try again." });
+      else if (/INVALID_(EMAIL|USERNAME)_OR_PASSWORD|INVALID_PASSWORD|USER_NOT_FOUND|INVALID_USERNAME/.test(code)) {
+        setErrors({ form: "That sign-in and password don't match. Check them and try again." });
+      }
       else setErrors({ form: result.error.message || "We couldn't sign you in. Try again." });
       return;
     }
@@ -64,7 +71,16 @@ export function AuthForm({ mode, next, onModeChange, onSuccess }: AuthFormProps)
       {isSignup ? (
         <TextField label="Your name" name="name" autoComplete="name" value={values.name} onChange={set("name")} error={errors.name} />
       ) : null}
-      <TextField label="Email" name="email" type="email" autoComplete="email" value={values.email} onChange={set("email")} error={errors.email} />
+      <TextField
+        label={isSignup ? "Email" : "Email or username"}
+        name="email"
+        type={isSignup ? "email" : "text"}
+        autoComplete={isSignup ? "email" : "username"}
+        autoCapitalize="none"
+        value={values.email}
+        onChange={set("email")}
+        error={errors.email}
+      />
       <TextField
         label="Password"
         name="password"

@@ -10,31 +10,35 @@ import { generateMockBusinesses } from "../src/lib/places/mock";
 import { slugify } from "../src/lib/util/text";
 
 const db = createDb(process.env.DATABASE_URL ?? "file:local.db", process.env.DATABASE_AUTH_TOKEN);
-const PASSWORD = "demo1234";
+type DemoUser = { email: string; username: string; name: string; plan: "free" | "pro"; password: string };
 
-async function upsertUser(email: string, name: string, plan: "free" | "pro") {
+const DEMO_USERS = {
+  free: { email: "free@demo.dev", username: "free", name: "Fathima Rasheed", plan: "free", password: "demo1234" },
+  pro: { email: "pro@demo.dev", username: "pro", name: "Arjun Menon", plan: "pro", password: "demo1234" },
+  deepu: { email: "deepu@demo.dev", username: "deepu", name: "Deepu", plan: "pro", password: "deepudeepu" },
+} satisfies Record<string, DemoUser>;
+
+/** Create or reset a demo account: clears its pipeline and resets its plan and password. */
+async function upsertUser({ email, username, name, plan, password }: DemoUser) {
   const existing = await db.query.user.findFirst({ where: eq(user.email, email) });
+  const id = existing?.id ?? crypto.randomUUID();
+  const hashed = await hashPassword(password);
   if (existing) {
-    await db.delete(site).where(eq(site.userId, existing.id));
-    await db.delete(lead).where(eq(lead.userId, existing.id));
-    await db.update(user).set({ plan, name }).where(eq(user.id, existing.id));
-    return existing.id;
+    await db.delete(site).where(eq(site.userId, id));
+    await db.delete(lead).where(eq(lead.userId, id));
+    await db.update(user).set({ plan, name, username, displayUsername: username }).where(eq(user.id, id));
+    await db.update(account).set({ password: hashed }).where(eq(account.userId, id));
+    return id;
   }
-  const id = crypto.randomUUID();
-  await db.insert(user).values({ id, email, name, plan, emailVerified: true });
-  await db.insert(account).values({
-    id: crypto.randomUUID(),
-    accountId: id,
-    providerId: "credential",
-    userId: id,
-    password: await hashPassword(PASSWORD),
-  });
+  await db.insert(user).values({ id, email, username, displayUsername: username, name, plan, emailVerified: true });
+  await db.insert(account).values({ id: crypto.randomUUID(), accountId: id, providerId: "credential", userId: id, password: hashed });
   return id;
 }
 
 async function main() {
-  await upsertUser("free@demo.dev", "Fathima Rasheed", "free");
-  const proId = await upsertUser("pro@demo.dev", "Arjun Menon", "pro");
+  await upsertUser(DEMO_USERS.free);
+  await upsertUser(DEMO_USERS.deepu);
+  const proId = await upsertUser(DEMO_USERS.pro);
 
   const picks: Array<{ what: string; where: string; index: number; status: LeadStatus; publish: boolean; daysAgo: number }> = [
     { what: "bakeries", where: "Trivandrum", index: 0, status: "contacted", publish: true, daysAgo: 6 },
@@ -78,8 +82,9 @@ async function main() {
 
   const published = await db.query.site.findMany({ where: inArray(site.userId, [proId]), columns: { publishedSlug: true } });
   console.log("Seeded demo accounts:");
-  console.log("  free@demo.dev / demo1234  (free plan, empty pipeline)");
-  console.log("  pro@demo.dev  / demo1234  (pro plan, 4 leads)");
+  console.log("  deepu / deepudeepu        (pro plan, empty pipeline; or deepu@demo.dev)");
+  console.log("  free  / demo1234          (free plan, empty pipeline; or free@demo.dev)");
+  console.log("  pro   / demo1234          (pro plan, 4 leads; or pro@demo.dev)");
   const slug = published.find((row) => row.publishedSlug)?.publishedSlug;
   if (slug) console.log(`  Published site: /s/${slug}`);
 }

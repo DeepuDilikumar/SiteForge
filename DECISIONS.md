@@ -23,6 +23,14 @@ Choices made where the spec was silent or where a later instruction changed it.
 - Material Symbols Rounded loads from Google Fonts with `icon_names=`, so only the icons the app
   uses are downloaded.
 
+## Sign-in
+
+- Accounts can sign in with a username or an email (Better Auth's username plugin). Sign-up asks
+  for an email; demo accounts have usernames `deepu`, `free` and `pro`.
+- In GitHub Codespaces the app's public URL is derived from `CODESPACE_NAME` and
+  `GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN`, and that Codespace's forwarded ports are trusted
+  origins, so auth works without editing `.env`. `BETTER_AUTH_URL` still wins when set.
+
 ## Data model additions
 
 - `business.source` (`mock` | `google`) and `business.countryCode`: needed to refresh only Google
