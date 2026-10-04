@@ -12,10 +12,11 @@ type ScaledFrameProps = {
   aspect: number;
   className?: string;
   interactive?: boolean;
+  eager?: boolean;
 };
 
 /** A real rendered page, shrunk to fit its container. Sandboxed, with a skeleton while it loads. */
-export function ScaledFrame({ src, title, viewportWidth, aspect, className = "", interactive = false }: ScaledFrameProps) {
+export function ScaledFrame({ src, title, viewportWidth, aspect, className = "", interactive = false, eager = false }: ScaledFrameProps) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -39,7 +40,7 @@ export function ScaledFrame({ src, title, viewportWidth, aspect, className = "",
           src={src}
           title={title}
           sandbox="allow-scripts"
-          loading="lazy"
+          loading={eager ? "eager" : "lazy"}
           tabIndex={interactive ? 0 : -1}
           aria-hidden={interactive ? undefined : true}
           onLoad={() => setLoaded(true)}

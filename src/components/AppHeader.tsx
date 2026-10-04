@@ -65,7 +65,7 @@ export async function AppHeader({ viewer, search, signInNext }: AppHeaderProps) 
               >
                 Sign in
               </Link>
-              <ButtonLink href="/signup" size="md">
+              <ButtonLink href="/signup" size="md" className="hidden sm:inline-flex">
                 Get started
               </ButtonLink>
             </>

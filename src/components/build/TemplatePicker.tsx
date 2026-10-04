@@ -46,6 +46,7 @@ export function TemplatePicker({ businessId, value, recommended, accent, onChang
               title={`${template.name} template preview`}
               viewportWidth={1280}
               aspect={0.68}
+              eager
               className="border-b border-border"
             />
             <div className="flex items-start gap-3 p-4">

@@ -33,8 +33,11 @@ function countLine(count: number, filter: Filter) {
   return `${count} ${noun}`;
 }
 
+/** Neighbourhood and city, skipping door numbers and cross-street lines. */
 function shortAddress(address: string) {
-  return address.split(",").slice(0, 2).join(",").trim();
+  const parts = address.split(",").map((part) => part.trim());
+  const useful = parts.filter((part) => !/^\d+$|^TC\s|\d+(st|nd|rd|th) Cross/i.test(part));
+  return (useful.length >= 2 ? useful : parts).slice(0, 2).join(", ");
 }
 
 type State =

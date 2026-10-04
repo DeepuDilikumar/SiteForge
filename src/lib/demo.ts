@@ -6,7 +6,8 @@ import type { Business } from "@/lib/places/types";
 
 /** The sample business used on the landing page's before/after. Same data search would return. */
 export function demoBusiness(): Business {
-  const [record] = generateMockBusinesses({ what: "bakeries", where: "Trivandrum" });
+  const record = generateMockBusinesses({ what: "bakeries", where: "Trivandrum" }).find((item) => item.websiteStatus === "none");
+  if (!record) throw new Error("The demo search has no business without a website.");
   return { ...record, id: "demo", fetchedAt: new Date(0) };
 }
 

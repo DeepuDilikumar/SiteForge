@@ -30,7 +30,7 @@ type BadgeTone = "neutral" | "strong" | "warning" | "muted" | "success" | "accen
 
 const tones: Record<BadgeTone, string> = {
   neutral: "bg-surface-2 text-text-2",
-  strong: "bg-text text-bg",
+  strong: "bg-surface-2 text-text border border-border",
   warning: "bg-warning-soft text-warning",
   muted: "bg-surface text-text-2 border border-border",
   success: "bg-success-soft text-success",

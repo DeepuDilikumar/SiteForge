@@ -108,7 +108,7 @@ export function Pipeline({ rows: initialRows, firstName }: { rows: PipelineRow[]
           Nothing here yet. Leads move here when you change their status.
         </p>
       ) : (
-        <ul className="mt-4 divide-y divide-border rounded-xl border border-border">
+        <ul className="mt-4 divide-y divide-border overflow-hidden rounded-xl border border-border">
           {visible.map((row) => (
             <li key={row.leadId} className="group relative flex items-center gap-4 px-4 py-3 transition-colors duration-200 ease-standard hover:bg-surface">
               <div className="w-24 flex-none overflow-hidden rounded-sm border border-border sm:w-28">

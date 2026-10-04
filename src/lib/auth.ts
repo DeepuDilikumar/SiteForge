@@ -6,11 +6,12 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
+/** Production servers must set BETTER_AUTH_SECRET; development and `next build` may use a placeholder. */
+const requiresRealSecret = process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build";
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
-  secret:
-    process.env.BETTER_AUTH_SECRET ||
-    (process.env.NODE_ENV === "production" ? undefined : "siteforge-development-secret-not-for-production"),
+  secret: process.env.BETTER_AUTH_SECRET || (requiresRealSecret ? undefined : "siteforge-development-secret-not-for-production"),
   database: drizzleAdapter(db, { provider: "sqlite", schema }),
   emailAndPassword: { enabled: true, minPasswordLength: 8, autoSignIn: true },
   user: {

@@ -14,6 +14,7 @@ import { Wordmark } from "@/components/ui/Logo";
 import { SearchBox } from "@/components/ui/SearchBox";
 import { proPrice } from "@/lib/billing/provider";
 import { demoBusiness } from "@/lib/demo";
+import { slugify } from "@/lib/util/text";
 import { getViewer } from "@/lib/viewer";
 
 const STEPS = [
@@ -72,7 +73,7 @@ export default async function LandingPage() {
           <p className="mt-8 max-w-[600px] text-center text-lg font-[600] tracking-tight text-text sm:text-xl">
             Find businesses without websites. Build them one in a minute. Send the link.
           </p>
-          <SuggestionChips className="mt-6 max-w-[640px]" />
+          <SuggestionChips className="mt-6 max-w-[760px]" />
         </section>
 
         <section aria-labelledby="proof-title" className="px-2 sm:px-4">
@@ -102,7 +103,7 @@ export default async function LandingPage() {
                 <Icon name="arrow_forward" size={32} className="mx-auto rotate-90 text-text-2 lg:rotate-0" />
                 <div>
                   <p className="mb-4 text-sm text-text-2">After</p>
-                  <BrowserFrame url="siteforge.app/s/sree-padmanabha-bakery-trivandrum">
+                  <BrowserFrame url={`siteforge.app/s/${slugify(`${demo.name} ${demo.city}`)}`}>
                     <ScaledFrame src="/api/demo-site?template=legacy" title={`Generated website for ${demo.name}`} viewportWidth={1280} aspect={0.62} />
                   </BrowserFrame>
                 </div>
